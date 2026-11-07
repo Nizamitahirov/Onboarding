@@ -1,9 +1,11 @@
 // api/chat.js — NextGen AI köməkçisi üçün Vercel serverless funksiyası (Groq).
-// Açar yalnız serverdə saxlanılır: Vercel → Project → Settings → Environment Variables → GROQ_API_KEY.
+// Açar bu serverless faylda saxlanılır (brauzerə göndərilmir). İstəsəniz Vercel-də GROQ_API_KEY
+// environment variable təyin edib bu dəyəri əvəz edə bilərsiniz.
 // Model avtomatik seçilir: sualın mürəkkəbliyinə görə "fast" və ya "deep" səviyyə,
 // sonra Groq-da hazırda mövcud olan modellər arasından ən uyğunu; xəta olarsa növbəti modelə keçir.
 
 const GROQ = 'https://api.groq.com/openai/v1';
+const GROQ_API_KEY = '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';
 
 // Üstünlük sırası (mövcud olmayanlar avtomatik keçilir)
 const PREFERRED = {
@@ -160,7 +162,7 @@ async function handler(req, res) {
   let body = req.body;
   if (typeof body === 'string') { try { body = JSON.parse(body); } catch (e) { body = {}; } }
   try {
-    const out = await chat(body, { key: process.env.GROQ_API_KEY });
+    const out = await chat(body, { key: process.env.GROQ_API_KEY || GROQ_API_KEY });
     return res.status(out.status).json(out.json);
   } catch (e) {
     return res.status(500).json({ error: 'server_error' });
