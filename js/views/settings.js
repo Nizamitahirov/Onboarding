@@ -3,6 +3,7 @@ import { all, set, dbState, loadSeed, isEmpty } from '../db.js';
 import { uid, isValidEmail } from '../utils.js';
 import { i18n, setLang, setTheme } from '../i18n.js';
 import { toast } from '../store.js';
+import { systemRows } from '../exportRows.js';
 
 export const SystemModal = {
   name: 'SystemModal',
@@ -62,6 +63,7 @@ export default {
   methods: {
     setLang, setTheme,
     edit(s) { this.editing = s; this.showSystem = true; },
+    exportSheets() { return [{ name: this.t('settings.systems'), rows: systemRows() }]; },
     add() { this.editing = null; this.showSystem = true; },
     askSeed() { if (isEmpty()) this.runSeed(); else this.confirmSeed = true; },
     async runSeed() {
@@ -95,7 +97,10 @@ export default {
     <section class="card flush">
       <div class="row-between pad wrap gap-sm">
         <h2 class="card-title nomargin">{{ t('settings.systems') }}</h2>
-        <button type="button" class="btn btn-primary btn-sm" @click="add">+ {{ t('settings.addSystem') }}</button>
+        <div class="head-actions">
+          <ui-export :sheets="exportSheets" filename="systems" small></ui-export>
+          <button type="button" class="btn btn-primary btn-sm" @click="add">+ {{ t('settings.addSystem') }}</button>
+        </div>
       </div>
       <table class="rtable">
         <thead><tr><th>{{ t('settings.systemName') }}</th><th>{{ t('access.owner') }}</th><th>{{ t('settings.ownerEmail') }}</th><th>{{ t('settings.notifyEmails') }}</th><th></th></tr></thead>

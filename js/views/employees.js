@@ -1,5 +1,5 @@
 // views/employees.js — işçilər siyahısı və "Yeni işçi" modalı
-import { all } from '../db.js';
+import { employeeRows } from '../exportRows.js';
 import { employeeStatus, isValidEmail } from '../utils.js';
 import {
   session, visibleEmployees, departments, progressFor, overdueOf, dayInfo, fullName, personName, usersByRole, createEmployee, toast,
@@ -113,7 +113,9 @@ export default {
   components: { NewEmployeeModal, EmployeeCard },
   props: { query: Object },
   data() {
-    return { q: '', status: (this.query && this.query.status) || 'all', dept: '', showNew: false };
+    let mode = 'cards';
+    try { mode = localStorage.getItem('employeesView') === 'list' ? 'list' : 'cards'; } catch (e) { /* ignore */ }
+    return { q: '', status: (this.query && this.query.status) || 'all', dept: '', showNew: false, mode };
   },
   computed: {
     isHr() { return session.role === 'hr'; },
@@ -135,12 +137,22 @@ export default {
     },
   },
   watch: { query(v) { if (v && v.status) this.status = v.status; } },
-  methods: { created(emp) { this.showNew = false; location.hash = '#/employee/' + emp.id; } },
+  methods: {
+    fullName, personName, employeeStatus,
+    created(emp) { this.showNew = false; location.hash = '#/employee/' + emp.id; },
+    openEmp(e) { location.hash = '#/employee/' + e.id; },
+    setMode(m) { this.mode = m; try { localStorage.setItem('employeesView', m); } catch (e) { /* ignore */ } },
+    info(e) { return { st: employeeStatus(e), day: dayInfo(e), prog: progressFor(e.id), late: overdueOf(e.id).length }; },
+    exportSheets() { return [{ name: this.t('export.sheetEmployees'), rows: employeeRows(this.filtered) }]; },
+  },
   template: `
   <div class="page">
     <div class="page-head">
       <h1>{{ t('nav.employees') }}</h1>
-      <button v-if="isHr" type="button" class="btn btn-primary" @click="showNew = true">+ {{ t('employees.new') }}</button>
+      <div class="head-actions">
+        <ui-export :sheets="exportSheets" filename="employees"></ui-export>
+        <button v-if="isHr" type="button" class="btn btn-primary" @click="showNew = true">+ {{ t('employees.new') }}</button>
+      </div>
     </div>
     <div class="toolbar">
       <input class="search" type="search" v-model="q" :placeholder="t('employees.search')" :aria-label="t('employees.search')">
@@ -148,15 +160,51 @@ export default {
         <option value="">{{ t('employees.allDepts') }}</option>
         <option v-for="d in depts" :key="d" :value="d">{{ deptLabel(d) }}</option>
       </select>
+      <div class="view-toggle" role="group" :aria-label="t('employees.viewCards') + ' / ' + t('employees.viewList')">
+        <button type="button" class="icon-btn" :class="{ active: mode === 'cards' }" @click="setMode('cards')" :aria-pressed="mode === 'cards'" :title="t('employees.viewCards')" :aria-label="t('employees.viewCards')">
+          <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M3 3h8v8H3zm10 0h8v8h-8zM3 13h8v8H3zm10 0h8v8h-8z"/></svg></button>
+        <button type="button" class="icon-btn" :class="{ active: mode === 'list' }" @click="setMode('list')" :aria-pressed="mode === 'list'" :title="t('employees.viewList')" :aria-label="t('employees.viewList')">
+          <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M3 4h18v3H3zm0 6.5h18v3H3zM3 17h18v3H3z"/></svg></button>
+      </div>
     </div>
     <div class="chips" role="tablist">
       <button v-for="(n, s) in chips" :key="s" type="button" class="chip" :class="{ active: status === s }" @click="status = s" role="tab" :aria-selected="status === s">
         {{ s === 'all' ? t('common.all') : t('status.' + s) }} <span class="chip-count">{{ n }}</span>
       </button>
     </div>
-    <div class="card-grid" v-if="filtered.length">
+    <div class="card-grid" v-if="filtered.length && mode === 'cards'">
       <employee-card v-for="e in filtered" :key="e.id" :emp="e"></employee-card>
     </div>
+    <section class="card flush emp-table" v-else-if="filtered.length">
+      <table class="rtable">
+        <thead><tr>
+          <th>{{ t('fields.name') }}</th><th>{{ t('fields.department') }}</th><th>{{ t('fields.status') }}</th><th>{{ t('fields.startDate') }}</th>
+          <th>{{ t('export.day') }}</th><th>{{ t('employees.progress') }}</th><th>{{ t('roles.buddy') }}</th><th>{{ t('status.overdue') }}</th>
+        </tr></thead>
+        <tbody>
+          <tr v-for="e in filtered" :key="e.id" class="clickable-row" @click="openEmp(e)">
+            <td :data-label="t('fields.name')">
+              <a :href="'#/employee/' + e.id" class="name-cell" @click.stop>
+                <ui-avatar :name="fullName(e)" :size="36"></ui-avatar>
+                <span class="min0"><strong class="block">{{ fullName(e) }}</strong><span class="muted small block">{{ e.position }}</span></span>
+              </a>
+            </td>
+            <td :data-label="t('fields.department')">{{ deptLabel(e.department) }}</td>
+            <td :data-label="t('fields.status')"><ui-status :status="info(e).st"></ui-status></td>
+            <td :data-label="t('fields.startDate')">{{ fmtDate(e.startDate) }}</td>
+            <td :data-label="t('export.day')">
+              <span v-if="info(e).st === 'preboarding'" class="small">{{ t('common.startsIn', { n: info(e).day.untilStart }) }}</span>
+              <span v-else>{{ info(e).day.shown }}/180</span>
+            </td>
+            <td :data-label="t('employees.progress')">
+              <div class="mini-progress"><ui-progress :value="info(e).prog.pct"></ui-progress><span class="small">{{ info(e).prog.pct }}%</span></div>
+            </td>
+            <td :data-label="t('roles.buddy')">{{ e.buddyId ? personName(e.buddyId) : '—' }}</td>
+            <td :data-label="t('status.overdue')"><span v-if="info(e).late" class="pill pill-overdue">⏰ {{ info(e).late }}</span><span v-else class="muted">—</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
     <ui-empty v-else icon="🔍" :text="t('employees.noResults')"></ui-empty>
     <new-employee-modal v-if="showNew" @close="showNew = false" @created="created"></new-employee-modal>
   </div>`,

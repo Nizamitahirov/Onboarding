@@ -1,0 +1,8 @@
+# Firebase service account açarları — heç vaxt commit etməyin
+*firebase-adminsdk*.json
+serviceAccount*.json
+.env
+node_modules/
+.env.local
+.env*.local
+.vercel

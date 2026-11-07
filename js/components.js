@@ -1,5 +1,6 @@
 // components.js — ümumi UI komponentləri
 import { initials } from './utils.js';
+import { UiExport } from './export.js';
 
 export const UiModal = {
   name: 'UiModal',
@@ -80,4 +81,5 @@ export function registerComponents(app) {
   app.component('ui-status', UiStatus);
   app.component('ui-stars', UiStars);
   app.component('ui-empty', UiEmpty);
+  app.component('ui-export', UiExport);
 }

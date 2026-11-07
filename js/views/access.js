@@ -1,5 +1,6 @@
 // views/access.js — Access Management
 import { all, one } from '../db.js';
+import { accessRows, accessHistoryRows } from '../exportRows.js';
 import {
   session, visibleEmployees, visibleAccessRequests, recipientsFor, createAccessRequests, changeAccessStatus, accessMailto,
   fullName, personName, LEVELS, ACCESS_STATUSES, toast,
@@ -156,11 +157,19 @@ export default {
     },
     rows() { return this.tab === 'all' ? this.base : this.base.filter((r) => r.status === this.tab); },
   },
+  methods: {
+    exportSheets() {
+      return [{ name: 'Access', rows: accessRows(this.rows) }, { name: this.t('export.sheetHistory'), rows: accessHistoryRows(this.rows) }];
+    },
+  },
   template: `
   <div class="page">
     <div class="page-head">
       <h1>{{ t('access.title') }}</h1>
-      <button v-if="canCreate" type="button" class="btn btn-primary" @click="showNew = true">+ {{ t('access.new') }}</button>
+      <div class="head-actions">
+        <ui-export :sheets="exportSheets" filename="access-requests"></ui-export>
+        <button v-if="canCreate" type="button" class="btn btn-primary" @click="showNew = true">+ {{ t('access.new') }}</button>
+      </div>
     </div>
     <div class="chips" role="tablist">
       <button v-for="(n, s) in tabs" :key="s" type="button" class="chip" :class="{ active: tab === s }" @click="tab = s" role="tab" :aria-selected="tab === s">

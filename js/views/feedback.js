@@ -1,5 +1,6 @@
 // views/feedback.js — qarşılıqlı rəy
 import { one, update } from '../db.js';
+import { feedbackRows } from '../exportRows.js';
 import {
   session, visibleFeedback, feedbackTargets, canWriteFeedback, createFeedback, openWindow, personName, fullName, visibleEmployees, WINDOWS, toast,
 } from '../store.js';
@@ -117,12 +118,18 @@ export default {
       return visibleFeedback().filter((f) => (this.win === 'all' || f.window === Number(this.win)) && (!this.emp || f.employeeId === this.emp));
     },
   },
-  methods: { fullName },
+  methods: {
+    fullName,
+    exportSheets() { return [{ name: 'Feedback', rows: feedbackRows(this.list) }]; },
+  },
   template: `
   <div class="page">
     <div class="page-head">
       <h1>{{ t('nav.feedback') }}</h1>
-      <button v-if="canWrite" type="button" class="btn btn-primary" @click="showNew = true">+ {{ t('feedback.write') }}</button>
+      <div class="head-actions">
+        <ui-export :sheets="exportSheets" filename="feedback"></ui-export>
+        <button v-if="canWrite" type="button" class="btn btn-primary" @click="showNew = true">+ {{ t('feedback.write') }}</button>
+      </div>
     </div>
     <div class="toolbar">
       <div class="chips">

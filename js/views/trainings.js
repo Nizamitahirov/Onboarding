@@ -1,6 +1,7 @@
 // views/trainings.js — təlimlər, iştirakçılar cədvəli, ekrandan imza və akt çapı
 import { one, set } from '../db.js';
 import { uid } from '../utils.js';
+import { trainingRows, participantRows } from '../exportRows.js';
 import { SignaturePad } from '../signature.js';
 import {
   session, currentUserId, visibleTrainings, signatureOf, signedCount, isEmployeeSigned, signAsEmployee, signAsTrainer,
@@ -73,12 +74,22 @@ export default {
     personName, signedCount,
     mySig(tr) { return signatureOf(tr.id, session.employeeId); },
     created(tr) { this.showNew = false; location.hash = '#/training/' + tr.id; },
+    exportSheets() {
+      const only = this.isEmployee ? session.employeeId : null;
+      return [
+        { name: this.t('nav.trainings'), rows: trainingRows(this.list) },
+        { name: this.t('export.sheetParticipants'), rows: participantRows(this.list, only) },
+      ];
+    },
   },
   template: `
   <div class="page">
     <div class="page-head">
       <h1>{{ t('nav.trainings') }}</h1>
-      <button v-if="canCreate" type="button" class="btn btn-primary" @click="showNew = true">+ {{ t('trainings.new') }}</button>
+      <div class="head-actions">
+        <ui-export :sheets="exportSheets" filename="trainings"></ui-export>
+        <button v-if="canCreate" type="button" class="btn btn-primary" @click="showNew = true">+ {{ t('trainings.new') }}</button>
+      </div>
     </div>
     <div class="card-grid" v-if="list.length">
       <a v-for="tr in list" :key="tr.id" class="card hover-lift training-card" :href="'#/training/' + tr.id">
@@ -125,6 +136,10 @@ export const TrainingDetail = {
       } catch (e) { toast(String(e.message || e), 'error'); }
     },
     print() { window.print(); },
+    exportSheets() {
+      const only = this.role === 'employee' ? session.employeeId : null;
+      return [{ name: this.t('export.sheetParticipants'), rows: participantRows([this.tr], only) }];
+    },
   },
   template: `
   <div class="page" v-if="tr">
@@ -135,7 +150,10 @@ export const TrainingDetail = {
           <h1 class="h-title">{{ tx(tr, 'title') }}</h1>
           <p class="muted">📅 {{ fmtDate(tr.date) }} · 👤 {{ t('roles.trainer') }}: {{ personName(tr.trainerId) }} · 👥 {{ tr.participantIds.length }}</p>
         </div>
-        <button type="button" class="btn btn-secondary" @click="print">🖨️ {{ t('trainings.printAct') }}</button>
+        <div class="head-actions">
+          <ui-export :sheets="exportSheets" filename="training"></ui-export>
+          <button type="button" class="btn btn-secondary" @click="print">🖨️ {{ t('trainings.printAct') }}</button>
+        </div>
       </div>
       <div class="row-between small"><span>{{ t('trainings.signedXY', { x: signedCount(tr), y: tr.participantIds.length }) }}</span></div>
       <ui-progress :value="tr.participantIds.length ? Math.round(signedCount(tr) / tr.participantIds.length * 100) : 0"></ui-progress>

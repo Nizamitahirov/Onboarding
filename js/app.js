@@ -7,6 +7,7 @@ import {
   markNotificationsRead, currentUserId, personName,
 } from './store.js';
 import { registerComponents } from './components.js';
+import { NextGenChat } from './chatbot.js';
 import DashboardView from './views/dashboard.js';
 import EmployeesView from './views/employees.js';
 import ProfileView from './views/profile.js';
@@ -37,6 +38,7 @@ function parseHash() {
 }
 
 const App = {
+  components: { NextGenChat },
   data() { return { route: parseHash(), moreOpen: false, notifOpen: false }; },
   computed: {
     ROLES() { return ROLES; },
@@ -177,6 +179,8 @@ const App = {
         </div>
       </div>
     </nav>
+
+    <next-gen-chat></next-gen-chat>
 
     <div class="toasts" aria-live="polite">
       <div v-for="x in session.toasts" :key="x.id" class="toast" :class="'toast-' + x.type">{{ x.message }}</div>
