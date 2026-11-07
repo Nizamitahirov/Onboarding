@@ -613,6 +613,34 @@ input[type="checkbox"]:disabled { cursor: not-allowed; }
   .ng-input { padding-bottom: calc(10px + env(safe-area-inset-bottom)); }
   .toasts { bottom: calc(var(--bottom-h) + 80px); }
 }
+/* chatbot markdown */
+.ng-panel.ng-wide { width: min(760px, calc(100vw - 48px)); height: min(820px, calc(100vh - 48px)); }
+.ng-wide .ng-msg { max-width: 94%; }
+.ng-msg.ng-assistant:has(.md-table) { max-width: 100%; width: 100%; }
+.ng-md { font-size: .9rem; }
+.ng-md > :first-child { margin-top: 0; }
+.ng-md p { margin: 0 0 .55rem; }
+.ng-md .md-h { margin: .85rem 0 .4rem; font-size: .95rem; font-weight: 700; color: var(--text); display: flex; align-items: center; gap: 6px; }
+.ng-md h4.md-h { font-size: 1rem; }
+.ng-md .md-h::before { content: ''; width: 4px; height: 1em; border-radius: 2px; background: var(--gradient); flex: 0 0 auto; }
+.ng-md ul, .ng-md ol { margin: .25rem 0 .6rem; padding-left: 1.25rem; }
+.ng-md li { margin: .2rem 0; padding-left: .1rem; }
+.ng-md li::marker { color: var(--red); font-weight: 700; }
+.ng-md li > ul, .ng-md li > ol { margin: .2rem 0 .3rem; }
+.ng-md hr { border: 0; border-top: 1px solid var(--border); margin: .75rem 0; }
+.ng-md blockquote { margin: .5rem 0; padding: .5rem .75rem; border-left: 3px solid var(--orange); background: var(--surface-2); border-radius: 0 10px 10px 0; color: var(--text-muted); }
+.ng-md blockquote p:last-child { margin: 0; }
+.ng-md pre { background: var(--surface-2); border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px; overflow-x: auto; font-size: .8rem; white-space: pre; }
+.ng-md pre code { background: none; padding: 0; }
+.ng-md a { color: var(--red); text-decoration: underline; }
+[data-theme="dark"] .ng-md a { color: #FF8A5C; }
+.ng-md .md-table { overflow-x: auto; margin: .5rem 0 .7rem; border: 1px solid var(--border); border-radius: 10px; -webkit-overflow-scrolling: touch; }
+.ng-md table { width: 100%; border-collapse: collapse; font-size: .82rem; line-height: 1.4; }
+.ng-md th, .ng-md td { padding: 7px 10px; border-bottom: 1px solid var(--border); text-align: left; vertical-align: top; white-space: normal; overflow-wrap: normal; word-break: normal; min-width: 64px; }
+.ng-md th { background: var(--surface-2); font-weight: 700; font-size: .76rem; text-transform: uppercase; letter-spacing: .3px; color: var(--text-muted); white-space: nowrap; }
+.ng-md tbody tr:nth-child(even) td { background: color-mix(in srgb, var(--surface-2) 55%, transparent); }
+.ng-md tbody tr:last-child td { border-bottom: 0; }
+@media (max-width: 767px) { .ng-expand { display: none; } .ng-panel.ng-wide { width: 100%; height: 100%; } }
 @media print { .ng { display: none !important; } }
 
 /* ---------- çap (Aktı çap et) ---------- */

@@ -2,45 +2,12 @@
 import { i18n } from './i18n.js';
 import { session, currentUserId } from './store.js';
 import { buildChatContext } from './chatContext.js';
+import { renderMarkdown } from './markdown.js';
+
+export { renderMarkdown };
 
 const API = '/api/chat';
 const STORE_PREFIX = 'nextgen_chat_';
-
-function esc(s) {
-  return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-}
-function inline(s) {
-  return s
-    .replace(/`([^`]+)`/g, '<code>$1</code>')
-    .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
-    .replace(/(^|[^*])\*([^*\n]+)\*/g, '$1<em>$2</em>');
-}
-/** Minimal və təhlükəsiz markdown: əvvəl HTML escape, sonra qalın/kursiv/kod/siyahılar */
-export function renderMarkdown(text) {
-  const lines = esc(text).split('\n');
-  const out = [];
-  let list = null;
-  const close = () => { if (list) { out.push(`</${list}>`); list = null; } };
-  lines.forEach((raw) => {
-    const line = raw.trimEnd();
-    let m;
-    if ((m = line.match(/^\s*[-*•]\s+(.*)$/))) {
-      if (list !== 'ul') { close(); out.push('<ul>'); list = 'ul'; }
-      out.push(`<li>${inline(m[1])}</li>`);
-    } else if ((m = line.match(/^\s*\d+[.)]\s+(.*)$/))) {
-      if (list !== 'ol') { close(); out.push('<ol>'); list = 'ol'; }
-      out.push(`<li>${inline(m[1])}</li>`);
-    } else if ((m = line.match(/^#{1,6}\s+(.*)$/))) {
-      close(); out.push(`<p><strong>${inline(m[1])}</strong></p>`);
-    } else if (!line.trim()) {
-      close();
-    } else {
-      close(); out.push(`<p>${inline(line)}</p>`);
-    }
-  });
-  close();
-  return out.join('');
-}
 
 const SUGGESTIONS = {
   hr: ['chat.s.hr1', 'chat.s.hr2', 'chat.s.hr3', 'chat.s.hr4'],
@@ -53,7 +20,11 @@ const SUGGESTIONS = {
 
 export const NextGenChat = {
   name: 'NextGenChat',
-  data() { return { open: false, input: '', messages: [], loading: false, error: '' }; },
+  data() {
+    let wide = false;
+    try { wide = localStorage.getItem('nextgen_wide') === '1'; } catch (e) { /* ignore */ }
+    return { open: false, wide, input: '', messages: [], loading: false, error: '' };
+  },
   computed: {
     storeKey() { return STORE_PREFIX + session.role + '_' + (currentUserId() || ''); },
     suggestions() { return (SUGGESTIONS[session.role] || []).map((k) => this.t(k)); },
@@ -74,6 +45,7 @@ export const NextGenChat = {
       try { this.messages = JSON.parse(sessionStorage.getItem(this.storeKey) || '[]'); } catch (e) { this.messages = []; }
     },
     save() { try { sessionStorage.setItem(this.storeKey, JSON.stringify(this.messages.slice(-40))); } catch (e) { /* ignore */ } },
+    toggleWide() { this.wide = !this.wide; try { localStorage.setItem('nextgen_wide', this.wide ? '1' : '0'); } catch (e) { /* ignore */ } },
     clear() { this.messages = []; this.error = ''; this.save(); },
     scroll() { const el = this.$refs.log; if (el) el.scrollTop = el.scrollHeight; },
     onKeydown(e) { if (e.key === 'Enter' && !e.shiftKey && !e.isComposing) { e.preventDefault(); this.send(); } },
@@ -120,13 +92,16 @@ export const NextGenChat = {
       <span class="ng-fab-icon" aria-hidden="true">✦</span><span class="ng-fab-label">NextGen</span>
     </button>
 
-    <section v-if="open" class="ng-panel" role="dialog" aria-label="NextGen">
+    <section v-if="open" class="ng-panel" :class="{ 'ng-wide': wide }" role="dialog" aria-label="NextGen">
       <header class="ng-head">
         <span class="ng-avatar" aria-hidden="true">✦</span>
         <div class="grow min0">
           <strong>NextGen</strong>
           <span class="ng-sub">{{ t('chat.subtitle') }}</span>
         </div>
+        <button type="button" class="ng-icon ng-expand" @click="toggleWide" :title="wide ? t('chat.shrink') : t('chat.expand')" :aria-label="wide ? t('chat.shrink') : t('chat.expand')" :aria-pressed="wide">
+          <svg v-if="!wide" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M4 4h6v2H7.4l4.3 4.3-1.4 1.4L6 7.4V10H4zm16 16h-6v-2h2.6l-4.3-4.3 1.4-1.4 4.3 4.3V14h2z"/></svg>
+          <svg v-else width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M11 11H5V9h2.6L3.3 4.7l1.4-1.4L9 7.6V5h2zm2 2h6v2h-2.6l4.3 4.3-1.4 1.4-4.3-4.3V19h-2z"/></svg></button>
         <button type="button" class="ng-icon" @click="clear" :title="t('chat.clear')" :aria-label="t('chat.clear')" v-if="messages.length">
           <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M9 3h6l1 2h4v2H4V5h4zm-3 6h12l-1 12H7z"/></svg></button>
         <button type="button" class="ng-icon" @click="open = false" :aria-label="t('common.close')">✕</button>
@@ -142,7 +117,7 @@ export const NextGenChat = {
           </div>
         </div>
         <div v-for="(m, i) in messages" :key="i" class="ng-msg" :class="'ng-' + m.role">
-          <div v-if="m.role === 'assistant'" class="ng-bubble" v-html="renderMarkdown(m.content)"></div>
+          <div v-if="m.role === 'assistant'" class="ng-bubble ng-md" v-html="renderMarkdown(m.content)"></div>
           <div v-else class="ng-bubble">{{ m.content }}</div>
           <span v-if="m.model" class="ng-model" :title="t('chat.modelHint')">{{ m.tier === 'deep' ? '🧠' : '⚡' }} {{ m.model }}</span>
         </div>

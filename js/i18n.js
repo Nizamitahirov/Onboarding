@@ -99,7 +99,7 @@ export const messages = {
       loadSeed: 'Nümunə datanı yüklə', seedConfirm: 'Mövcud data silinəcək və nümunə data ilə əvəz olunacaq. Davam edilsin?', seeded: 'Nümunə data yükləndi',
     },
     chat: {
-      open: 'NextGen AI köməkçisini aç', subtitle: 'AI köməkçi · onboarding üzrə', clear: 'Söhbəti təmizlə', hello: 'Salam! Mən NextGen-əm 👋',
+      open: 'NextGen AI köməkçisini aç', expand: 'Genişləndir', shrink: 'Kiçilt', subtitle: 'AI köməkçi · onboarding üzrə', clear: 'Söhbəti təmizlə', hello: 'Salam! Mən NextGen-əm 👋',
       intro: 'Onboarding planı, gecikmiş tapşırıqlar, girişlər, handbook qaydaları və s. barədə soruşun. Yalnız sizin rolunuzun gördüyü data ilə cavab verirəm.',
       placeholder: 'Sualınızı yazın…', send: 'Göndər', thinking: 'Düşünür…', modelHint: 'Sualın mürəkkəbliyinə görə avtomatik seçilmiş model',
       disclaimer: 'NextGen səhv edə bilər — vacib məlumatı yoxlayın.',
@@ -228,7 +228,7 @@ export const messages = {
       loadSeed: 'Load sample data', seedConfirm: 'Existing data will be deleted and replaced with sample data. Continue?', seeded: 'Sample data loaded',
     },
     chat: {
-      open: 'Open NextGen AI assistant', subtitle: 'AI assistant · onboarding', clear: 'Clear chat', hello: "Hi! I'm NextGen 👋",
+      open: 'Open NextGen AI assistant', expand: 'Expand', shrink: 'Shrink', subtitle: 'AI assistant · onboarding', clear: 'Clear chat', hello: "Hi! I'm NextGen 👋",
       intro: 'Ask about onboarding plans, overdue tasks, access requests, handbook rules and more. I only use data your role can see.',
       placeholder: 'Type your question…', send: 'Send', thinking: 'Thinking…', modelHint: 'Model picked automatically based on question complexity',
       disclaimer: 'NextGen can make mistakes — double-check important info.',
