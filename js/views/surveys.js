@@ -1,5 +1,6 @@
 // views/surveys.js — sorğular (HR statistikası və işçi forması)
 import { all, one } from '../db.js';
+import { surveyResponseRows, surveyQuestionRows, employeeSurveyRows } from '../exportRows.js';
 import {
   session, currentEmployee, pendingSurveys, surveyTemplatesSorted, surveyStats, submitSurvey, surveyState, responseOf,
   responseAvg, responseNps, responseComment, personName, toast,
@@ -68,10 +69,27 @@ export default {
     tplDay(id) { const x = one('surveyTemplates', id); return x ? x.day : '?'; },
     fmtAvg(v) { return v == null ? '—' : v.toFixed(1); },
     fmtEnps(v) { return v == null ? '—' : (v > 0 ? '+' : '') + v; },
+    exportSheets() {
+      if (this.isEmployee) return [{ name: this.t('surveys.mySurveys'), rows: this.emp ? employeeSurveyRows(this.emp) : [] }];
+      const o = this.overall;
+      const r1 = (v) => (v == null ? '' : Math.round(v * 10) / 10);
+      const byTpl = this.perTemplate.map((x) => ({
+        [this.t('surveys.template')]: this.t('surveys.dayN', { n: x.tpl.day }), [this.t('surveys.responses')]: x.s.count,
+        [this.t('surveys.avgScore')]: r1(x.s.avg), eNPS: x.s.enps == null ? '' : x.s.enps,
+        [this.t('surveys.promoters')]: x.s.promoters, [this.t('surveys.passives')]: x.s.passives, [this.t('surveys.detractors')]: x.s.detractors,
+      }));
+      byTpl.push({ [this.t('surveys.template')]: this.t('common.all'), [this.t('surveys.responses')]: o.count, [this.t('surveys.avgScore')]: r1(o.avg),
+        eNPS: o.enps == null ? '' : o.enps, [this.t('surveys.promoters')]: o.promoters, [this.t('surveys.passives')]: o.passives, [this.t('surveys.detractors')]: o.detractors });
+      return [
+        { name: this.t('export.sheetByTemplate'), rows: byTpl },
+        { name: this.t('export.sheetResponses'), rows: surveyResponseRows(this.shown) },
+        { name: this.t('export.sheetQuestions'), rows: surveyQuestionRows() },
+      ];
+    },
   },
   template: `
   <div class="page">
-    <div class="page-head"><h1>{{ t('nav.surveys') }}</h1></div>
+    <div class="page-head"><h1>{{ t('nav.surveys') }}</h1><ui-export :sheets="exportSheets" filename="surveys"></ui-export></div>
 
     <template v-if="isEmployee">
       <template v-if="emp">

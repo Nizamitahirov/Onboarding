@@ -6,6 +6,7 @@ import {
   signatureOf, isEmployeeSigned, openWindow, fullName, personName, toast,
 } from '../store.js';
 import { FeedbackModal } from './feedback.js';
+import { profileSheets } from '../exportRows.js';
 
 export default {
   name: 'MeView',
@@ -34,6 +35,9 @@ export default {
   },
   methods: {
     isOverdue, personName,
+    exportSheets() {
+      return profileSheets(this.emp).filter((s) => s.name !== 'Access');
+    },
     async toggle(task) { await toggleTask(task); if (task.status === 'done') toast(this.t('me.taskDone')); },
     dueLabel(task) {
       const d = diffDays(task.dueDate, TODAY);
@@ -52,7 +56,10 @@ export default {
         <p v-else>{{ t('common.dayOf', { n: day.shown }) }}</p>
         <p class="small hero-sub">{{ emp.position }} · {{ deptLabel(emp.department) }}</p>
       </div>
-      <ui-ring :value="prog.pct" :size="104"></ui-ring>
+      <div class="hero-side">
+        <ui-ring :value="prog.pct" :size="104"></ui-ring>
+        <ui-export :sheets="exportSheets" filename="my-onboarding" small></ui-export>
+      </div>
     </section>
 
     <section class="card first-day" v-if="status === 'preboarding'">

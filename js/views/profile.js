@@ -9,6 +9,7 @@ import {
 } from '../store.js';
 import { AccessRequestModal, AccessTable } from './access.js';
 import { FeedbackCard, FeedbackModal } from './feedback.js';
+import { profileSheets } from '../exportRows.js';
 
 export const BuddyModal = {
   name: 'BuddyModal',
@@ -96,13 +97,17 @@ export default {
   methods: {
     fullName, personName, canToggleTask, isOverdue, responseAvg, responseNps, buddyLoad, addDaysFn: addDays,
     async toggle(task) { await toggleTask(task); },
+    exportSheets() { return profileSheets(this.emp); },
     lateDays(task) { return diffDays(TODAY, task.dueDate); },
     rangeLabel(p) { return p.from === p.to ? this.t('phases.dayN', { n: p.from }) : this.t('phases.range', { a: p.from, b: p.to }); },
     phaseDate(p) { return this.fmtDate(addDays(this.emp.startDate, p.from)); },
   },
   template: `
   <div class="page" v-if="emp">
-    <a href="#/employees" class="back-link">← {{ t('nav.employees') }}</a>
+    <div class="row-between wrap gap-sm">
+      <a href="#/employees" class="back-link">← {{ t('nav.employees') }}</a>
+      <ui-export :sheets="exportSheets" :filename="'employee-' + emp.firstName + '-' + emp.lastName" small></ui-export>
+    </div>
     <div class="banner-done" v-if="status === 'completed'" role="status">🎉 {{ t('profile.completed') }}</div>
 
     <section class="card profile-head">

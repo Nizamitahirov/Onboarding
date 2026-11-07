@@ -1,6 +1,7 @@
 // views/handbook.js — Employee Handbook
 import { update } from '../db.js';
-import { session, sectionsSorted, ackOf, ackCount, acknowledge, toast } from '../store.js';
+import { handbookRowsForEmployee, handbookMatrixRows } from '../exportRows.js';
+import { visibleEmployees, session, sectionsSorted, ackOf, ackCount, acknowledge, toast } from '../store.js';
 
 export default {
   name: 'HandbookView',
@@ -17,6 +18,15 @@ export default {
     readN() { return this.isEmployee ? ackCount(this.empId) : 0; },
   },
   methods: {
+    exportSheets() {
+      if (this.isEmployee) return [{ name: 'Handbook', rows: handbookRowsForEmployee(this.empId) }];
+      const emps = visibleEmployees();
+      const sections = this.sections.map((s) => ({
+        '#': s.order, [this.t('handbook.sections')]: this.tx(s, 'title'),
+        [this.t('export.read')]: emps.filter((e) => ackOf(e.id, s.id)).length, [this.t('export.tasksTotal')]: emps.length,
+      }));
+      return [{ name: this.t('export.sheetMatrix'), rows: handbookMatrixRows(emps) }, { name: this.t('export.sheetSections'), rows: sections }];
+    },
     ack(s) { return this.isEmployee ? ackOf(this.empId, s.id) : null; },
     paragraphs(s) { return String(this.tx(s, 'content') || '').split(/\n\s*\n/).filter(Boolean); },
     select(s) {
@@ -45,7 +55,10 @@ export default {
   <div class="page">
     <div class="page-head">
       <h1>{{ t('nav.handbook') }}</h1>
-      <span v-if="isEmployee" class="pill pill-onboarding">📘 {{ t('profile.handbookN', { n: readN, total: sections.length }) }}</span>
+      <div class="head-actions">
+        <span v-if="isEmployee" class="pill pill-onboarding">📘 {{ t('profile.handbookN', { n: readN, total: sections.length }) }}</span>
+        <ui-export :sheets="exportSheets" filename="handbook"></ui-export>
+      </div>
     </div>
     <div class="handbook">
       <aside class="card hb-list flush" :aria-label="t('handbook.sections')">

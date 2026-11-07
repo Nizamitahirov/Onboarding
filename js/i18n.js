@@ -33,7 +33,7 @@ export const messages = {
       overdueTasks: 'Gecikmiş tapşırıqlar', noOverdue: 'Gecikmiş tapşırıq yoxdur 👏', phaseDist: 'Mərhələ üzrə paylanma',
     },
     employees: {
-      search: 'Ad, vəzifə və ya e-poçt üzrə axtar…', allDepts: 'Bütün şöbələr', new: 'Yeni işçi', newTitle: 'Yeni işçi əlavə et', noResults: 'Heç bir işçi tapılmadı',
+      search: 'Ad, vəzifə və ya e-poçt üzrə axtar…', viewCards: 'Kart görünüşü', viewList: 'Siyahı görünüşü', progress: 'İrəliləyiş', allDepts: 'Bütün şöbələr', new: 'Yeni işçi', newTitle: 'Yeni işçi əlavə et', noResults: 'Heç bir işçi tapılmadı',
       planNote: 'Yadda saxlandıqdan sonra 19 tapşırıqdan ibarət onboarding planı şablondan avtomatik yaradılacaq.', created: '{name} əlavə edildi, plan yaradıldı',
     },
     profile: {
@@ -98,6 +98,17 @@ export const messages = {
       firestoreEmpty: 'Firestore boşdur — nümunə datanı yükləyin.', seedHint: 'Nümunə data: 10 işçi, 8 istifadəçi, 19 tapşırıq şablonu, sistemlər, sorğular, rəylər və təlimlər.',
       loadSeed: 'Nümunə datanı yüklə', seedConfirm: 'Mövcud data silinəcək və nümunə data ilə əvəz olunacaq. Davam edilsin?', seeded: 'Nümunə data yükləndi',
     },
+    export: {
+      excel: 'Excel', title: 'Excel faylı kimi yüklə (.xlsx)', done: '{name} yükləndi ({n} sətir)', failed: 'Eksport alınmadı',
+      day: 'Gün (X/180)', daysToStart: 'Başlamağa qalan gün', progressPct: 'İrəliləyiş %', tasksDone: 'Bitmiş tapşırıq', tasksTotal: 'Cəmi tapşırıq',
+      phase: 'Mərhələ', task: 'Tapşırıq', ownerRole: 'Məsul rol', dueDate: 'Son tarix', done_: 'Bitib', todo: 'Gözləyir', daysLate: 'Gecikmə (gün)',
+      doneAt: 'Bitmə vaxtı', lastChange: 'Son dəyişiklik', by: 'Kim', from: 'Kimdən', yes: 'Bəli', no: 'Xeyr', type: 'Növ', question: 'Sual',
+      read: 'Oxunub', readCount: 'Oxunub (X/8)', completedSigs: 'Tam imzalanıb', participantNames: 'İştirakçılar', empSignedAt: 'İşçi imza vaxtı',
+      trainerSignedAt: 'Təlimçi imza vaxtı', field: 'Sahə', value: 'Dəyər', metric: 'Göstərici',
+      sheetProfile: 'Profil', sheetEmployees: 'İşçilər', sheetOverdue: 'Gecikmiş tapşırıqlar', sheetKpi: 'Göstəricilər', sheetPhases: 'Mərhələlər',
+      sheetHistory: 'Tarixçə', sheetResponses: 'Cavablar', sheetQuestions: 'Suallar', sheetByTemplate: 'Şablonlar üzrə', sheetMatrix: 'İşçilər üzrə',
+      sheetMyTasks: 'Tapşırıqlarım', sheetSections: 'Bölmələr', sheetParticipants: 'İştirakçılar',
+    },
     dept: {},
   },
   en: {
@@ -131,7 +142,7 @@ export const messages = {
       overdueTasks: 'Overdue tasks', noOverdue: 'No overdue tasks 👏', phaseDist: 'Distribution by phase',
     },
     employees: {
-      search: 'Search by name, position or email…', allDepts: 'All departments', new: 'New employee', newTitle: 'Add new employee', noResults: 'No employees found',
+      search: 'Search by name, position or email…', viewCards: 'Card view', viewList: 'List view', progress: 'Progress', allDepts: 'All departments', new: 'New employee', newTitle: 'Add new employee', noResults: 'No employees found',
       planNote: 'After saving, a 19-task onboarding plan will be generated from the template automatically.', created: '{name} added, plan generated',
     },
     profile: {
@@ -195,6 +206,17 @@ export const messages = {
       data: 'Data', connection: 'Firebase connection status', connected: 'Connected', demoMode: 'Demo mode (localStorage)', connError: 'Connection error',
       firestoreEmpty: 'Firestore is empty — load the sample data.', seedHint: 'Sample data: 10 employees, 8 users, 19 task templates, systems, requests, feedback and trainings.',
       loadSeed: 'Load sample data', seedConfirm: 'Existing data will be deleted and replaced with sample data. Continue?', seeded: 'Sample data loaded',
+    },
+    export: {
+      excel: 'Excel', title: 'Download as Excel file (.xlsx)', done: '{name} downloaded ({n} rows)', failed: 'Export failed',
+      day: 'Day (X/180)', daysToStart: 'Days until start', progressPct: 'Progress %', tasksDone: 'Tasks done', tasksTotal: 'Total tasks',
+      phase: 'Phase', task: 'Task', ownerRole: 'Owner role', dueDate: 'Due date', done_: 'Done', todo: 'To do', daysLate: 'Days late',
+      doneAt: 'Completed at', lastChange: 'Last change', by: 'By', from: 'From', yes: 'Yes', no: 'No', type: 'Type', question: 'Question',
+      read: 'Read', readCount: 'Read (X/8)', completedSigs: 'Fully signed', participantNames: 'Participants', empSignedAt: 'Employee signed at',
+      trainerSignedAt: 'Trainer signed at', field: 'Field', value: 'Value', metric: 'Metric',
+      sheetProfile: 'Profile', sheetEmployees: 'Employees', sheetOverdue: 'Overdue tasks', sheetKpi: 'KPIs', sheetPhases: 'Phases',
+      sheetHistory: 'History', sheetResponses: 'Responses', sheetQuestions: 'Questions', sheetByTemplate: 'By template', sheetMatrix: 'By employee',
+      sheetMyTasks: 'My tasks', sheetSections: 'Sections', sheetParticipants: 'Participants',
     },
     dept: {
       IT: 'IT', HR: 'HR', Marketinq: 'Marketing', Biznes: 'Business', Risk: 'Risk', 'Maliyyə': 'Finance', 'Müştəri xidmətləri': 'Customer service',

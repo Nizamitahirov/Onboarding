@@ -1,6 +1,7 @@
 // views/dashboard.js — HR və Menecer paneli
 import { cache } from '../db.js';
 import { TODAY, PHASES, diffDays, employeeStatus, currentPhase, weekStart, addDays } from '../utils.js';
+import { employeeRows, taskRows } from '../exportRows.js';
 import { visibleEmployees, overdueOf, surveyStats, fullName, currentName, session } from '../store.js';
 
 export default {
@@ -53,7 +54,21 @@ export default {
       return keys.map((k) => ({ key: k, count: counts[k], pct: Math.round((counts[k] / max) * 100) }));
     },
   },
-  methods: { fullName, go(href) { if (!href) return; if (href === '#overdue') { const el = document.getElementById('overdue'); if (el) el.scrollIntoView({ behavior: 'smooth' }); } else location.hash = href; } },
+  methods: {
+    fullName,
+    exportSheets() {
+      const kv = this.kpis.map((k) => ({ [this.t('export.metric')]: this.t('dashboard.kpi.' + k.key), [this.t('export.value')]: k.value }));
+      const s = this.survey;
+      kv.push({ [this.t('export.metric')]: this.t('surveys.avgScore'), [this.t('export.value')]: s.avg == null ? '' : Math.round(s.avg * 10) / 10 });
+      kv.push({ [this.t('export.metric')]: 'eNPS', [this.t('export.value')]: s.enps == null ? '' : s.enps });
+      return [
+        { name: this.t('export.sheetKpi'), rows: kv },
+        { name: this.t('export.sheetEmployees'), rows: employeeRows(this.emps) },
+        { name: this.t('export.sheetOverdue'), rows: taskRows(this.overdue.map((o) => o.task), true) },
+        { name: this.t('export.sheetPhases'), rows: this.phases.map((p) => ({ [this.t('export.phase')]: this.t('phases.' + p.key), [this.t('export.value')]: p.count })) },
+      ];
+    },
+    go(href) { if (!href) return; if (href === '#overdue') { const el = document.getElementById('overdue'); if (el) el.scrollIntoView({ behavior: 'smooth' }); } else location.hash = href; } },
   template: `
   <div class="page">
     <section class="hero">
@@ -61,7 +76,10 @@ export default {
         <h1>{{ greeting }}</h1>
         <p>{{ t('dashboard.today') }}: {{ fmtDate(TODAY) }}</p>
       </div>
-      <div class="hero-badge">{{ emps.length }} {{ t('dashboard.employeesTracked') }}</div>
+      <div class="hero-side">
+        <div class="hero-badge">{{ emps.length }} {{ t('dashboard.employeesTracked') }}</div>
+        <ui-export :sheets="exportSheets" filename="dashboard"></ui-export>
+      </div>
     </section>
 
     <section class="kpi-grid">
