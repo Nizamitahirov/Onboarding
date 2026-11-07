@@ -98,6 +98,26 @@ export const messages = {
       firestoreEmpty: 'Firestore boşdur — nümunə datanı yükləyin.', seedHint: 'Nümunə data: 10 işçi, 8 istifadəçi, 19 tapşırıq şablonu, sistemlər, sorğular, rəylər və təlimlər.',
       loadSeed: 'Nümunə datanı yüklə', seedConfirm: 'Mövcud data silinəcək və nümunə data ilə əvəz olunacaq. Davam edilsin?', seeded: 'Nümunə data yükləndi',
     },
+    chat: {
+      open: 'NextGen AI köməkçisini aç', subtitle: 'AI köməkçi · onboarding üzrə', clear: 'Söhbəti təmizlə', hello: 'Salam! Mən NextGen-əm 👋',
+      intro: 'Onboarding planı, gecikmiş tapşırıqlar, girişlər, handbook qaydaları və s. barədə soruşun. Yalnız sizin rolunuzun gördüyü data ilə cavab verirəm.',
+      placeholder: 'Sualınızı yazın…', send: 'Göndər', thinking: 'Düşünür…', modelHint: 'Sualın mürəkkəbliyinə görə avtomatik seçilmiş model',
+      disclaimer: 'NextGen səhv edə bilər — vacib məlumatı yoxlayın.',
+      err: {
+        not_deployed: 'AI serveri tapılmadı. Chatbot Vercel-də (və ya "vercel dev" ilə) işləyir — lokal statik serverdə /api yoxdur.',
+        missing_key: 'Serverdə GROQ_API_KEY təyin olunmayıb (Vercel → Settings → Environment Variables).',
+        invalid_key: 'Groq açarı etibarsızdır və ya ləğv olunub.', rate_limited: 'Çox sayda sorğu — bir dəqiqə sonra yenidən cəhd edin.',
+        generic: 'Cavab almaq alınmadı. Bir az sonra yenidən cəhd edin.',
+      },
+      s: {
+        hr1: 'Hansı tapşırıqlar gecikib və kim məsuldur?', hr2: 'Bu ay hansı işçilər başlayır?', hr3: 'Survey nəticələrini və eNPS-i qısa analiz et', hr4: 'Hansı buddy-lərin yeri var?',
+        mgr1: 'Komandamda kimin irəliləyişi geri qalır?', mgr2: 'Gözləyən access sorğularım hansılardır?', mgr3: 'Bu həftə nəyə diqqət etməliyəm?',
+        bud1: 'Mənim işçilərimin vəziyyəti necədir?', bud2: 'Hansı rəy pəncərələri açıqdır?',
+        trn1: 'Hansı imzalar məni gözləyir?', trn2: 'Təlimlərin ümumi vəziyyəti necədir?',
+        it1: 'Gözləyən access sorğularını prioritetləşdir', it2: 'Hansı avadanlıq tapşırıqları gecikib?',
+        emp1: 'Bu gün nə etməliyəm?', emp2: 'Məzuniyyət qaydaları necədir?', emp3: 'Buddy-m kimdir və necə əlaqə saxlayım?', emp4: 'İlk gün nə gətirməliyəm?',
+      },
+    },
     export: {
       excel: 'Excel', title: 'Excel faylı kimi yüklə (.xlsx)', done: '{name} yükləndi ({n} sətir)', failed: 'Eksport alınmadı',
       day: 'Gün (X/180)', daysToStart: 'Başlamağa qalan gün', progressPct: 'İrəliləyiş %', tasksDone: 'Bitmiş tapşırıq', tasksTotal: 'Cəmi tapşırıq',
@@ -206,6 +226,26 @@ export const messages = {
       data: 'Data', connection: 'Firebase connection status', connected: 'Connected', demoMode: 'Demo mode (localStorage)', connError: 'Connection error',
       firestoreEmpty: 'Firestore is empty — load the sample data.', seedHint: 'Sample data: 10 employees, 8 users, 19 task templates, systems, requests, feedback and trainings.',
       loadSeed: 'Load sample data', seedConfirm: 'Existing data will be deleted and replaced with sample data. Continue?', seeded: 'Sample data loaded',
+    },
+    chat: {
+      open: 'Open NextGen AI assistant', subtitle: 'AI assistant · onboarding', clear: 'Clear chat', hello: "Hi! I'm NextGen 👋",
+      intro: 'Ask about onboarding plans, overdue tasks, access requests, handbook rules and more. I only use data your role can see.',
+      placeholder: 'Type your question…', send: 'Send', thinking: 'Thinking…', modelHint: 'Model picked automatically based on question complexity',
+      disclaimer: 'NextGen can make mistakes — double-check important info.',
+      err: {
+        not_deployed: 'AI server not found. The chatbot runs on Vercel (or with "vercel dev") — a plain static server has no /api.',
+        missing_key: 'GROQ_API_KEY is not set on the server (Vercel → Settings → Environment Variables).',
+        invalid_key: 'The Groq key is invalid or revoked.', rate_limited: 'Too many requests — try again in a minute.',
+        generic: 'Could not get an answer. Please try again shortly.',
+      },
+      s: {
+        hr1: 'Which tasks are overdue and who owns them?', hr2: 'Who starts this month?', hr3: 'Briefly analyze survey results and eNPS', hr4: 'Which buddies have capacity?',
+        mgr1: 'Who on my team is falling behind?', mgr2: 'Which of my access requests are pending?', mgr3: 'What should I focus on this week?',
+        bud1: 'How are my buddies doing?', bud2: 'Which feedback windows are open?',
+        trn1: 'Which signatures are waiting for me?', trn2: 'What is the overall status of trainings?',
+        it1: 'Prioritize the pending access requests', it2: 'Which equipment tasks are overdue?',
+        emp1: 'What should I do today?', emp2: 'What are the leave rules?', emp3: 'Who is my buddy and how do I reach them?', emp4: 'What should I bring on my first day?',
+      },
     },
     export: {
       excel: 'Excel', title: 'Download as Excel file (.xlsx)', done: '{name} downloaded ({n} rows)', failed: 'Export failed',

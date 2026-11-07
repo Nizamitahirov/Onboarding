@@ -46,6 +46,30 @@ Nümunə datanı sıfırlamaq üçün: **Ayarlar → Nümunə datanı yüklə** 
 
 Firestore-a qoşulmaq alınmasa, tətbiq avtomatik demo rejimə keçir və xəta Ayarlar ekranında göstərilir.
 
+## NextGen — AI köməkçi (Groq)
+
+Sağ aşağı küncdəki **✦ NextGen** düyməsi AI köməkçini açır. O, cari rolun görə bildiyi datadan (işçilər, tapşırıqlar, girişlər, sorğular, təlimlər, handbook) istifadə edərək cavab verir — məsələn, yeni işçi yalnız öz datasını, menecer yalnız öz komandasını görür.
+
+- Sorğular brauzerdən birbaşa Groq-a getmir: `api/chat.js` Vercel serverless funksiyası vasitəsilə gedir. **Groq açarı yalnız serverdə saxlanılır** və heç vaxt brauzerə və ya repoya düşmür.
+- **Model avtomatik seçilir:** sadə suallar üçün sürətli model (məs. `llama-3.1-8b-instant`), analiz/xülasə/müqayisə tələb edən suallar üçün güclü model (məs. `openai/gpt-oss-120b`, `llama-3.3-70b-versatile`). Server Groq-da hazırda mövcud olan modellərin siyahısını yoxlayır, model xəta verərsə (limit, köhnəlmə və s.) avtomatik növbətisinə keçir. Seçilən model hər cavabın altında göstərilir.
+
+**Qurulum (Vercel):**
+
+1. Vercel → Project → **Settings → Environment Variables** → `GROQ_API_KEY` = sizin Groq açarınız (Production, Preview, Development).
+2. Yenidən deploy edin (**Deployments → Redeploy**).
+
+**Lokal:** `npx serve .` yalnız statik faylları verir, `/api` işləmir. Chatbotu lokal yoxlamaq üçün [Vercel CLI](https://vercel.com/docs/cli) ilə:
+
+```bash
+echo "GROQ_API_KEY=gsk_..." > .env.local
+```
+
+```bash
+npx vercel dev
+```
+
+`.env.local` `.gitignore`-dadır — açarı heç vaxt commit etməyin.
+
 ## Vercel deploy
 
 1. Reponu GitHub-a push edin.
